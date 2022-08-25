@@ -1,0 +1,234 @@
+﻿@{
+    ViewData["Title"] = "ProfilePage";
+}
+@section Styles{
+    <link rel="stylesheet" href="~/css/Profile.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+}
+    <body>
+        <!-- 個人主頁  -->
+        <section class="profileBackground mb-5">
+            <div class="container py-4">
+                <!-- 主頁與標頭距離 -->
+                <div class="row">
+                    <div class="col">
+                    </div>
+                </div>
+                <!-- 大頭貼+姓名 -->
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card mb-4" id="namecard1">
+                            <div class="card-body text-center" id="namecard2">
+                                <div class="avatarBx m-auto mb-3">
+                                    <a v-bind:href="'/Profile/Index/'+user.userId">
+                                        <img class="cursor-pointer" v-bind:src="user.userHphoto" alt="avatar">
+                                    </a>
+                                </div>
+                                <h5 class="mb-1">{{user.userLname}}{{user.userFname}}  </h5>
+                                <label for="UserNname" class="form-label text-muted mb-1">{{user.userNname}}</label>
+                                <hr>
+                                <a href="/Home/ProfileUpdate1" class="btn"><i class="fa-solid fa-pen-to-square"></i>&nbsp;編輯</a>
+                            </div>
+                        </div>
+                        <!-- 左方 選單 -->
+                        <div class="card mb-4 mb-lg-0 text-nowrap" id="profileMenu">
+                            <div class="card-body p-0">
+                                <div class="ulitems">
+                                    <ul id="profileitems" class="list-group list-group-flush rounded-3">
+                                        <li id="myProfile" name="menuOption" class="list-group-item d-flex justify-content-center align-items-center p-3">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="25" fill="currentColor" class="bi bi-person-square" viewBox="0 0 16 16">
+                                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                                                    <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z" />
+                                                </svg>個人主頁
+                                            </span>
+                                        </li>
+                                        <li id="myCases" name="menuOption" class="list-group-item d-flex justify-content-center align-items-center p-3 ">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="25" fill="currentColor" class="bi bi-palette" viewBox="0 0 16 16">
+                                                    <path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                    <path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8zm-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7z" />
+                                                </svg>我的技能與需求
+                                            </span>
+                                        </li>
+                                         <li id="myExecuteCase" name="menuOption" class="list-group-item d-flex justify-content-center align-items-center p-3 ">
+                                            <span>
+                                                <i class="fa-solid fa-check-to-slot"></i>&nbsp;待結案
+                                            </span>
+                                        </li>
+                                        <li id="message" name="menuOption" class="list-group-item d-flex justify-content-center align-items-center p-3 ">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="25" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
+                                                    <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                                    <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z" />
+                                                </svg>留言管理
+                                            </span>
+                                        </li>
+                                        <li id="changePwd" name="menuOption" class="list-group-item d-flex justify-content-center align-items-center p-3 ">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="25" fill="currentColor" class="bi bi-shield-lock" viewBox="0 0 16 16">
+                                                    <path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z" />
+                                                    <path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415z" />
+                                                </svg>密碼變更
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 個人資料 -->
+                    <div class="col-lg-8" id="ajaxSection">
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        @*用於querystring轉換頁面內容*@
+        <section id="displayNone" style="display:none">
+            <button id="btnPostCase" onclick="getPoseCaseForm()"></button>
+        </section>
+
+    </body>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @section Scripts{
+    <script>
+        var ve = new Vue({
+            data: {
+                user: []
+            },
+            created: function() {
+                let self = this;
+                fetch("/api/UsersController/GetUsers").then(function(result) {
+                    return result.json();
+                })
+                    .then(function(mydata) {
+                        self.user = mydata;
+                    })
+            }
+        })
+        .$mount('#namecard1')
+
+        var myProfile = document.getElementById("myProfile");
+        myProfile.addEventListener("click", function() {
+            $.ajax({
+                type: "POST",
+                url: "/Profile/GetProfileSetting",
+                success: function(res) {
+                    $("#ajaxSection").html(res);
+                    $.getScript("/js/Profile/ProfileSetting.js");
+                },
+                error: function(res) {
+                    console.log(res);
+                }
+            });
+        });
+
+        var myCases = document.getElementById("myCases");
+        myCases.addEventListener("click", function() {
+            dynamicLoading.css("/css/Card.css");
+            dynamicLoading.css("/css/btn-shared.css");
+            $.ajax({
+                type: "POST",
+                url: "/Case/GetCaseList",
+                success: function(res) {
+                    $("#ajaxSection").html(res);
+                    $.getScript("/js/CaseList.js");
+                },
+                error: function(res) {
+                    console.log(res);
+                }
+            });
+        });
+
+        var myExecuteCase = document.getElementById("myExecuteCase");
+        myExecuteCase.addEventListener("click", function() {
+            dynamicLoading.css("/css/Case/ExecuteCase.css");
+            $.ajax({
+                type: "POST",
+                url: "/Case/GetExecuteCase",
+                success: function(res) {
+                    $("#ajaxSection").html(res);
+                    $.getScript("/js/Case/ExecuteCase.js");
+                },
+                error: function(res) {
+                    console.log(res);
+                }
+            });
+        });
+
+
+        var changePwd = document.getElementById("changePwd");
+        changePwd.addEventListener("click", function() {
+            $.ajax({
+                type: "POST",
+                url: "/UserLogin/changePwd",
+                success: function(res) {
+                    $("#ajaxSection").html(res);
+                },
+                error: function(res) {
+                    console.log(res);
+                }
+            });
+        });
+
+        var message = document.getElementById("message");
+        message.addEventListener("click", function() {
+            dynamicLoading.css("/css/Card.css");
+            dynamicLoading.css("/css/btn-shared.css");
+            $.ajax({
+                type: "POST",
+                url: "/UserLogin/message",
+                success: function(res) {
+                    $("#ajaxSection").html("");
+                    $("#ajaxSection").html(res);
+                },
+                error: function(res) {
+                    console.log(res);
+                }
+            });
+        })
+
+        function getPoseCaseForm() {
+            dynamicLoading.css("/css/PostCase.css");
+            $.ajax({
+                url: "/Case/GetPostCase",
+                type: "GET"
+            })
+                .done(function(res) {
+                    $("#ajaxSection").html(res);
+                    $.getScript("/js/PostCase.js", function() { });
+                })
+                .fail(function(res) {
+                    console.log(res);
+                });
+        }
+    </script>
+    <script>
+        //一進入此頁，ajaxSection就切到個人資訊
+        //點擊頁首連結進入貼文頁面
+        var queryString = location.search.split("=")[1];
+        var btnPostCase = document.getElementById("btnPostCase");
+        var myProfile = document.getElementById("myProfile");
+        var myCases = document.getElementById("myCases");
+
+        switch (queryString) {
+            case "myProfile":
+                myProfile.click();
+                break;
+            case "postcase":
+                btnPostCase.click();
+                break;
+            case "myCase":
+                myCases.click();
+                break;
+                dafault:
+                break;
+        }
+    </script>
+}
+
+
+

@@ -1,0 +1,135 @@
+﻿<style>
+        .cn {
+        position: relative;
+        border-radius: 5px;
+        padding: 10px 40px 30px;
+        background: var(--white);
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.03);
+    }
+
+</style>
+<section id="msg">
+    <div class="container mb-3 fs-18">
+        <div class="row justify-content-evenly align-items-center text-nowrap">
+            <div class="col-md-8 col-sm-12">
+                <a type="button" class="mainBtn" v-on:click="readAll"><strong>全部已讀</strong></a>
+            </div>
+
+            <div class="col-md-4">
+                <a type="button" class="btnSortCase active" id="allCase" v-on:click="GetAllCase">全部貼文</a>
+                <span>/</span>
+                <a type="button" class="btnSortCase" v-on:click="needOrSkillModel" data-bit=true>需求</a>
+                <span>/</span>
+                <a type="button" class="btnSortCase" v-on:click="needOrSkillModel" data-bit=false>技能</a>
+            </div>
+        </div>
+        <div class="cn row">
+            <div class="accordion accordion-flush" id="caseList">
+                <div v-for="(item,index) in Case" :key="item.caseid">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" :id="'h'+item.caseid">
+                            <button v-on:click="readOneMsg" :value="item.caseid" class=" accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse" :data-bs-target="'#d' + item.caseid" aria-expanded="true" :aria-controls="'d'+item.caseid" :data-bit="index">
+                                <div class="col-8">{{item.casetitle}}</div>
+                                <div class="">{{item.caseadddate}}</div>
+                                <span v-if="item.read>0" class="position-absolute top-50 end-100 translate-middle badge rounded-pill bg-danger">
+                                    {{item.read}}
+                                    <span class="visually-hidden">unread messages</span>
+                                    
+                                </span>
+                            </button>
+                        </h2>
+                        <div :id="'d'+item.caseid" class="accordion-collapse collapse" :aria-labelledby="'h'+item.caseid" data-bs-parent="#caseList">
+                            <div class="accordion-body">
+                                <div v-for="msgg in item.casemsg" style="font-size:15px;"><span style="color:var(--skill);">{{msgg.msguser}}</span>{{msgg.msg}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    var vm = new Vue({
+        el: "#msg",
+        data:
+        {
+            Case: [],
+            Case2: [],
+        },
+        methods:
+        {
+            GetAllCase: function(e) {
+                this.addClickClass(e);
+                this.Case = this.Case2.sort(function(a, b) { return b.read - a.read; });;
+            },
+            needOrSkillModel: function(e) {
+                this.addClickClass(e);
+                var bit = event.target.dataset.bit;
+                if (bit == "true") {
+                    this.Case = this.Case2.filter(x => x.casehelp == true).sort(function(a, b) { return b.read - a.read; });
+                }
+                else {
+                    this.Case = this.Case2.filter(x => x.casehelp == false).sort(function(a, b) { return b.read - a.read; });
+                }
+            },
+            addClickClass: function(e) {
+                var btnSortCase = document.querySelectorAll(".btnSortCase");
+                btnSortCase.forEach(x => x.classList.remove("active"));
+                e.target.classList.add("active");
+            },
+            readOneMsg: function(e) 
+            {
+                var self = this;
+                var caseid = e.target.value;
+                var index = event.target.dataset.bit;
+                fetch(`/api/Confirm/ReadOneMsg?id=${caseid}`)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(res) {
+                        console.log("res = ", res.message);
+                        self.Case[index].read = 0;
+                        
+                    });             
+            },
+            readAll: function() 
+            {
+                var self = this;
+                if (confirm("確定要全部已讀嗎?")) {
+                    fetch(`/api/Confirm/ReadAll?id=${@User.Identity.Name}`)
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(res) {
+                            for (var i = 0; i < self.Case.length; i++) 
+                            {
+                                self.Case[i].read = 0;
+                            }
+                            console.log("res = ", res.message);
+                        });
+                }
+                else { console.log("不確定"); }
+            }
+
+        },
+        mounted: function() {
+            let self = this;
+            fetch(`/api/Confirm/AllCase?id=${@User.Identity.Name}`)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(res) {
+                    console.log("GetAllCase = ", res);
+                    self.Case = self.Case2 = res.sort(function(a, b) { return b.read - a.read; });
+                    
+                });
+
+        }
+
+    });
+
+</script>

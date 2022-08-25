@@ -1,0 +1,200 @@
+﻿<div class="container mt-5">
+    <div class="m-auto col-md-8 col-sm-10 col-10">
+        <div id="homeContent" class="container cn mb-5">
+            <div class="row">
+                <div id="reDeco" class="col-md-5 col-sm-12 col-12 p-0 position-relative">
+                    
+                    <div class="reBgBx">
+                        <img src="~/Img/Register/Bg.png" />
+                    </div>
+                </div>
+                <form id="form" class="col-md-7 col-sm-12 col" action="/UserLogin/Register" method="post" onsubmit="return false" novalidate>
+                    <div>
+                        <div class="row pt-3">
+                            <div class="col-12">
+                                <h4 class="postTitle mb-3">註冊帳戶</h4>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="LoginName" class="form-label">帳號</label>
+                                <input type="text" class="form-control "
+                                       id="LoginName" name="LoginName" v-model="Account" placeholder="" required>
+                                <div class="invalid-feedback">
+                                    <div id="Accerrormsg"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="LoginPwd" class="form-label">密碼</label>
+                                <input type="password" class="form-control"
+                                       id="LoginPwd" name="LoginPwd" v-model="Password" placeholder="" required>
+                                <div class="invalid-feedback">
+                                    <div id="Pwderrormsg"></div>
+                                </div>
+
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="ConfirmPwd" class="form-label">確認密碼</label>
+                                <input type="password" class="form-control"
+                                       id="ConfirmPwd" name="ConfirmPwd" v-model="ConfirmPwd" placeholder="" required>
+                                <div class="invalid-feedback">
+                                    <div id="Conferrormsg"></div>
+                                </div>
+
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="LoginEmail" class="form-label">註冊信箱</label>
+                                <input type="text" class="form-control"
+                                       id="LoginEmail" name="LoginEmail" v-model="Email" placeholder="例如XXX@mail.com" required>
+                                <div class="invalid-feedback">
+                                    <div id="Emailerrormsg"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button class="postBtn w-25 mt-4" type="submit" v-on:click="sub">註冊</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal -->
+            @*<div class="modal fade" id="success" tabindex="-1" aria-labelledby="successModalLabe" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabe">註冊成功</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            確認或{{count}}秒後導向登入畫面
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="postBtn">確定</button>
+            </div>
+            </div>
+            </div>
+            </div>*@
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "#homeContent",
+            data:
+            {
+                Account: "",
+                Password: "",
+                ConfirmPwd: "",
+                Email: "",
+                count: 5,
+
+            },
+            methods:
+            {
+                sub: function() {
+                    var self = this;
+                    var data =
+                    {
+                        LoginName: this.Account,
+                        LoginPwd: this.Password,
+                        LoginEmail: this.Email,
+                        ConfirmPwd: this.ConfirmPwd
+                    };
+                    console.log(data);
+
+                    fetch(`/api/Confirm/ConfirmRegister`, {
+                        method: 'POST',
+                        headers:
+                        {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(res) {
+                            console.log("m = ", res);
+                            if (res.accMessage != null) { document.getElementById("LoginName").setAttribute("class", "form-control is-invalid"); $('#Accerrormsg').text(res.accMessage); }
+                            else { document.getElementById("LoginName").setAttribute("class", "form-control is-valid") }
+                            if (res.pwdMessage != null) { document.getElementById("LoginPwd").setAttribute("class", "form-control is-invalid"); $('#Pwderrormsg').text(res.pwdMessage); }
+                            else { document.getElementById("LoginPwd").setAttribute("class", "form-control is-valid") }
+                            if (res.confMessage != null) { document.getElementById("ConfirmPwd").setAttribute("class", "form-control is-invalid"); $('#Conferrormsg').text(res.confMessage); }
+                            else { document.getElementById("ConfirmPwd").setAttribute("class", "form-control is-valid") }
+                            if (res.emailMessage != null) { document.getElementById("LoginEmail").setAttribute("class", "form-control is-invalid"); $('#Emailerrormsg').text(res.emailMessage); }
+                            else { document.getElementById("LoginEmail").setAttribute("class", "form-control is-valid") }
+                            if (res.message == null) {
+                                
+                                //$("#success").modal('show');
+                                //self.countDown();
+                                self.success();
+                            }
+                        })
+                        .catch(function(res) {
+                            console.log("err = ", res);
+                        });
+                },
+                countDown: function() {
+                    console.log(this.count);
+                    if (this.count == 0) {
+                        location.href = "/UserLogin/Login";
+                    }
+                    else {
+                        this.count = this.count - 1;
+                        window.setTimeout(this.countDown, 1000);
+                    }
+
+                },
+                success: function() {
+                    swal("註冊成功!", "點擊確認或3秒後導向登入畫面", "success", { button: "確認", timer: 3000 })
+                        .then((value) => {
+                            $("#form").attr("onsubmit", "retrun true");
+                                $("#form").submit();
+                        });
+                }
+            },
+        });
+    </script>
+}
+    @section Styles
+    {
+    <link rel="stylesheet" href="~/css/Register.css" asp-append-version="true" />
+
+    <style>
+            .cn {
+            position: relative;
+            border-radius: 5px;
+            background: var(--white);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+        .postTitle {
+            font-weight: 700;
+        }
+        .postBtn {
+            border: 0px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            background: var(--help);
+            font-weight: 700;
+        }
+        .postBtn:hover {
+                background: var(--help1);
+            }
+            h6 {
+            font-weight: 700;
+        }
+        h4::before {
+                content: '';
+                padding-right: 10px;
+                border-left: 5px solid var(--help);
+            }
+
+    </style>
+}

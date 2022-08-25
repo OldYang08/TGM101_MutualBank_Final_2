@@ -1,0 +1,167 @@
+﻿
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">網站統計</h1>
+</div>
+
+
+
+<div class="aspect-ratio-box">
+
+    <div class="chart-container-frame row">
+        <div class="col-md-6 col-lg-6">
+            <div class="fs-3">註冊人數統計</div>
+            <div class="chart-container-1" >
+                <canvas id="userdata"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="fs-3">文章數量</div>
+            <div class="chart-container-3">
+                <canvas id="casedata"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="fs-3">文章類別統計</div>
+    <div class="chart-container-2">
+        <canvas id="skilldata"></canvas>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.0/dist/chart.min.js"></script>
+    <script>
+
+
+        //註冊人數
+        var userdata = @Html.Raw(ViewBag.usersdata);
+        var ctx = document.getElementById("userdata"),
+            userdata = new Chart(ctx, {
+                type: "line", // 圖表類型
+                data: {
+                    labels: @Html.Raw(ViewBag.Months), // 標題
+                    datasets: [{
+                        data: userdata, // 資料
+                        backgroundColor: [
+                            'rgba(112,149,225,0.5)',
+                        ],
+                        pointRadius: 5,
+                        pointHoverRadius: 10,
+                        label: "2022年"
+                    }],
+
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+
+                            min: 0,
+                            ticks: {
+                                stepSize: 5
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                fontSize: 100,
+                            },
+                        }
+                    }
+
+                }
+            });
+        //文章數量
+        var casedata = @Html.Raw(ViewBag.casedata);
+        var ctx = document.getElementById("casedata"),
+            casedata = new Chart(ctx, {
+                type: "line", // 圖表類型
+                data: {
+                    labels: @Html.Raw(ViewBag.Months), // 標題
+                    datasets: [{
+                        data: casedata, // 資料
+                        backgroundColor: [
+                            'rgba(216,43,43,0.5)',
+                        ],
+                        pointRadius: 5,
+                        pointHoverRadius: 10,
+                        label: "2022年"
+                    }],
+
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+
+                            min: 0,
+                            ticks: {
+                                stepSize: 5
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                fontSize: 100,
+                            },
+                        }
+                    }
+
+                }
+            });
+
+        //文章標籤統計
+        var skilldata = @Html.Raw(ViewBag.skilldata);
+        var lable = @Html.Raw(ViewBag.skillnamedata);
+        const backgroundcolor = [];
+        for (i = 0; i < lable.length; i++) {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            backgroundcolor.push('rgba(' + r + ',' + g + ',' + b + ',0.5)');
+        };
+        var ctx = document.getElementById("skilldata"),
+            skilldata = new Chart(ctx, {
+                type: "doughnut", // 圖表類型
+                data: {
+                    labels: lable, // 標題
+                    datasets: [{
+                        data: skilldata, // 資料
+                        backgroundColor: backgroundcolor,
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false, // 固定長寬比
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                            boxWidth: 80,
+                            fontSize: 50,
+
+                        }
+                    }
+                }
+            });
+
+    </script>
+
+}

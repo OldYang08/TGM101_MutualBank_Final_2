@@ -1,0 +1,302 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@{
+    //初始化Case
+    var modelDataString = Newtonsoft.Json.JsonConvert.SerializeObject(@Model);
+    var tagDataString = Newtonsoft.Json.JsonConvert.SerializeObject((List<Skill>)ViewBag.Tags);
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/card.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/btn-shared.css" asp-append-version="true" />
+}
+
+    <div class="wrap" id="home">
+
+        <div class="home container">
+            <div class="typeBar fs-24">
+                <button type="button" class="mainBtn" name="mainBtn" data-order="type-Help" v-on:click="getOrderModels">
+                    <i class="fa-solid fa-square-h"></i><span>&nbsp;需要幫忙</span>
+                </button>
+                <button type="button" class="mainBtn" name="mainBtn" data-order="type-Skill" v-on:click="getOrderModels">
+                    <i class="fa-solid fa-square-poll-horizontal"></i><span>&nbsp;提供技能</span>
+                </button>
+            </div>
+
+            <div class="tagBar">
+                <div class="tags fs-16">
+                    <span class="btnSortCase active" data-order="skillid-0" v-on:click="getOrderModels">全部</span>
+                    <span class="btnSortCase" v-for="item in tagList" :data-order="'skillid-'+item.SkillId" v-on:click="getOrderModels">{{item.SkillName}}</span>
+                </div>
+                <div class="order">
+                    <span>排序：</span>
+                    <select class="orderSelect" id="orderModel" :data-order="'order-'+orderByOption" v-model="orderByOption" v-on:change="getOrderModels">
+                        <option value="releaseDate" selected>發佈時間</option>
+                        <option value="messageCount">留言數</option>
+                        <option value="expireDate">期限</option>
+                    </select>
+                    <div id="sorting" class="icon" data-order="seq-desc" v-on:click="getOrderModels">
+                        <i id="iconSort" class="fa-solid fa-arrow-down-short-wide"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4" v-if="isModelExist">
+                    <div class="col" v-for="item in casePageModel">
+                        <div class="card mb-2 w-100">
+                            <div class="imgBx">
+                                <div class="card-tag">
+                                    <span class="case-type" :data-order="'skillid-'+item.CaseSkillId" v-on:click="getOrderModels">
+                                        <i class="fa-solid fa-square-h" v-if="item.CaseNeedHelp"></i>
+                                        <i class="fa-solid fa-square-poll-horizontal" v-else></i>&nbsp{{item.CaseSkillName}}
+                                    </span>
+                                </div>
+                                <div class="d-flex w-100 justify-content-center" id="card-info">
+                                    <div class="card-info">
+                                        <div class="me-2">
+                                            <i class="fa-solid fa-location-dot"></i>&nbsp;{{item.CaseSerAreaName}}
+                                        </div>
+
+                                        <div>
+                                            <i class="fa-solid fa-comment-dots"></i>&nbsp;{{item.MessageCount}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <a v-bind:href="'/PostPage/Index/'+item.CaseId">
+                                    <img v-bind:src="item.CasePhoto" class="card-img-top p-2" alt="image not found">
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title fw-400" title="item.CaseTitle">{{item.CaseTitle}}</h5>
+                                <div><p class="card-text mt-1 fw-300">{{item.CaseIntroduction}}</p></div>
+                                <hr />
+                                <div class="container mt-3 p-0">
+                                    <div class="row">
+                                        <div class="col-md-8 col">
+
+                                            <div class="row">
+                                                <div class="userPhoto">
+                                                    <div class="PhotoBx">
+                                                        <a v-bind:href="'/Profile/Index/'+item.CaseUserId">
+                                                            <img class="pe-none" v-bind:src="item.UserPhoto">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 text-start align-items-center userInfo">
+                                                    <p class="infoTitle">{{item.CaseUserName}}</p>
+                                                    <p class="infoText">{{item.CaseReleaseDate | showDate}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center p-0">
+                                            <a class="btn text-nowrap" v-bind:href="'/PostPage/Index/'+item.CaseId">詳細</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-auto" v-else>
+                    <div id="whenNoCase" class="d-flex justify-content-center align-items-center">
+                        <div>
+                            <img id="noCaseImg" src="https://pic.sopili.net/pub/emoji/twitter/2/72x72/1f47b.png">
+                        </div>
+                        <div>
+                            <h1 id="noCaseText" class="p-5 fw-400">
+                                沒有相關內容
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="isModelExist">
+                    <div id="loadingbar" class="justify-content-center align-items-center mt-5"
+                     v-bind:class={'d-flex':!isLoadingFinished,'d-none':isLoadingFinished}>
+                        <div class="spinner-border" role="status"></div>
+                        <span class="ms-3">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @section Scripts{
+
+    <script>
+        var caseModel = @Html.Raw(modelDataString);
+        var tagListData = @Html.Raw(tagDataString);
+        var orderByDafult = document.getElementById("orderModel").value;
+        //Vue
+        var vmIndex = new Vue({
+            el: "#home",
+            data: {
+                casePageModel: [],
+                caseFilterModel: caseModel,
+                caseDataModel: caseModel,
+                tagList: tagListData,
+                sortByType: "null",
+                sortByTag: 0,
+                orderByOption: orderByDafult,
+                isOrderByDesc: 1,
+                pageCount: 8,
+                pageNumber: 0,
+                isLoadingFinished: false
+            },
+            methods: {
+                getOrderModels: function(e) {
+                    var datasetOrder = e.target.dataset.order;
+                    var keyword = e.target.dataset.order.split("-")[1];
+                    if (datasetOrder.includes("type")) {
+                        var mainBtn = document.querySelectorAll(".mainBtn");
+                        if (!e.target.classList.contains("active")) {
+                            this.sortByType = keyword == "Help" ? true : false;
+                            //add class
+                            mainBtn.forEach(x => x.classList.remove("active"));
+                            e.target.classList.add("active");
+                        }
+                        else {
+                            this.sortByType = "null";
+                            e.target.classList.remove("active");
+                        }
+                    }
+                    else if (datasetOrder.includes("skillid")) {
+                        this.sortByTag = keyword;
+                        //add class
+                        var btnSortCase = document.querySelectorAll(".btnSortCase");
+                        btnSortCase.forEach(x => x.classList.remove("active"));
+                        btnSortCase[keyword].classList.add("active");
+                    }
+                    else if (datasetOrder.includes("seq")) {
+                        //toggle class
+                        iconSort.classList.toggle('fa-arrow-down-short-wide');
+                        iconSort.classList.toggle('fa-arrow-up-short-wide');
+                        if (keyword == "desc") {
+                            sorting.dataset.order = "seq-asc";
+                        }
+                        else {
+                            sorting.dataset.order = "seq-desc";
+                        }
+                        this.isOrderByDesc = keyword == "desc" ? -1 : 1;
+                    }
+
+                    //1.sort by tag
+                    var f1 = [];
+                    if (this.sortByTag != "0") {
+                        f1 = vmIndex.caseDataModel.filter(x => x.CaseSkillId == vmIndex.sortByTag);
+                    }
+                    else {
+                        f1 = vmIndex.caseDataModel;
+                    }
+                    //2.sort by type
+                    var f2 = [];
+                    if (this.sortByType != "null") {
+                        f2 = f1.filter(x => x.CaseNeedHelp == vmIndex.sortByType);
+                    }
+                    else {
+                        f2 = f1;
+                    }
+                    //3.order by option
+                    this.caseFilterModel = this.orderByOptionValue(f2);
+                    //update pagemodel
+                    this.isLoadingFinished = true;
+                    this.pageNumber = 0;
+                    this.casePageModel.length = 0;
+                    this.isLoadingFinished = false;
+                },
+                //排序功能
+                orderByOptionValue: function(dataModel) {
+                    var isDesc = this.isOrderByDesc;
+                    switch (this.orderByOption) {
+                        case "releaseDate":
+                            return this.orderByReleaseDate(isDesc, dataModel);
+                            break;
+                        case "messageCount":
+                            return this.orderByMessageCount(isDesc, dataModel);
+                            break;
+                        case "expireDate":
+                            return this.orderByExpireDate(isDesc, dataModel);
+                            dafault:
+                            break;
+                    }
+                },
+                orderByReleaseDate: function(intDesc, dataModel) {
+                    return dataModel.sort(function(a, b) {
+                        return b.CaseReleaseDate > a.CaseReleaseDate ? intDesc : -intDesc
+                    });
+                },
+                orderByExpireDate: function(intDesc, dataModel) {
+                    return dataModel.sort(function(a, b) {
+                        return b.CaseExpireDate > a.CaseReleaseDate ? intDesc : -intDesc
+                    });
+                },
+                orderByMessageCount: function(intDesc, dataModel) {
+                    if (intDesc == 1) {
+                        return dataModel.sort(function(a, b) {
+                            return b.MessageCount - a.MessageCount
+                        });
+                    }
+                    else {
+                        return dataModel.sort(function(a, b) {
+                            return a.MessageCount - b.MessageCount
+                        });
+                    }
+                },
+            },
+            computed: {
+                isModelExist: function() {
+                    return this.caseFilterModel.length == 0 ? false : true;
+                }
+            },
+            watch: {
+                pageNumber: function() {
+                    if (this.pageNumber > 0) {
+                        var min = (this.pageNumber - 1) * (this.pageCount + 1);
+                        var pageData = this.caseFilterModel.slice(min, min + this.pageCount)
+                        for (var i = 0; i < pageData.length; i++) {
+                            this.casePageModel.push(pageData[i]);
+                        }
+                        this.$forceUpdate();
+                    }
+                    if (this.pageNumber == Math.ceil(this.caseFilterModel.length / this.pageCount)) {
+                        this.isLoadingFinished = true;
+                    }
+                    else {
+                        this.isLoadingFinished = false;
+                    }
+                }
+            },
+            filters: {
+                showDate: function(e) {
+                    if (e.includes("T")) {
+                        return e.split("T")[0];
+                    }
+                }
+            },
+            created: function() {
+                this.caseFilterModel = this.orderByOptionValue(this.caseDataModel);
+            },
+            mounted: function() {
+                //分頁功能
+                this.pageNumber = 1;
+                var self = this;
+                var loadingbar = document.getElementById("loadingbar");
+                var ob = new IntersectionObserver(function(x) {
+                    if (x[0].isIntersecting) {
+                        self.pageNumber += 1;
+                    }
+                }, {
+                    threshold: 0.1
+                });
+                ob.observe(loadingbar);
+            }
+        });
+
+    </script>
+
+}

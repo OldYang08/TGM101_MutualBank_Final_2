@@ -1,2 +1,2 @@
-# TGM101_MutualBank_Final_2
-TGM101_MutualBank_Final_2
+# MutualBank
+TGM101_互助銀行

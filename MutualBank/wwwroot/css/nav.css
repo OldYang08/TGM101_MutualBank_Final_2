@@ -1,0 +1,266 @@
+﻿/*泛用*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style-type: none;
+    text-decoration: none !important;
+    font-family: 'Noto Sans TC', sans-serif;
+    /* 預覽框線 */
+    /*border: 0.5px solid #808080;*/
+}
+.fromNav {
+    position: relative;
+    top: 50px;
+    margin-bottom:200px;
+}
+body {
+    background-color: var(--bg);
+}
+
+a {
+    color: var(--black) !important;
+}
+
+
+.fs-14 {
+    font-size: 14px;
+}
+.fs-16 {
+    font-size: 16px;
+}
+.fs-18 {
+    font-size:18px;
+}
+.fs-24 {
+    font-size: 24px;
+}
+.fw-300 {
+    font-weight: 300;
+}
+.fw-400 {
+    font-weight: 400;
+}
+
+.fw-500 {
+    font-weight: 500;
+}
+.fw-700 {
+    font-weight:700;
+}
+
+
+/*_Layout*/
+.toTop {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1rem;
+    font-size: 2rem;
+}
+.toTop i {
+    color:var(--black);
+}
+    .navBar {
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        padding: 0 2.5%;
+        display: flex;
+        justify-content: space-evenly;
+        background: var(--white);
+        min-height: 70px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.03);
+        z-index: 100;
+        white-space: nowrap;
+    }
+
+    .navBar .topL {
+        display: flex;
+        margin: auto;
+    }
+
+        .navBar .topL .logo {
+            position: relative;
+            top: -10px;
+            width: 40px;
+            height: 40px;
+        }
+
+            .navBar .topL .logo img {
+                object-fit: cover;
+                max-width: 160%;
+            }
+
+        .navBar .topL .search {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin: auto;
+            margin-left: 50px;
+            width: 70%;
+            background: var(--bg);
+            border-radius: 5px;
+        }
+            .navBar .topL .search .selectList {
+                background: var(--bg);
+                color: var(--black);
+                border: 0px;
+                width:85px;
+                text-align:center;
+            }
+            .navBar .topL .search .selectOption {
+                background: var(--white);
+                color: var(--black);
+                border: 0px;
+                margin: 10px;
+            }
+            .navBar .topL .search .searchBtn {
+                color:transparent;
+                border:0px;
+            }
+            .navBar .topL .search input {
+                position: relative;
+                width: 70%;
+                left: 0;
+                padding: 0 7px;
+                border-radius: 8px;
+                font-size: 16px;
+                border: 2px solid var(--gray);
+            }
+
+            .navBar .topL .search i {
+                position: absolute;
+                left: 90%;
+                top: 15%;
+                font-size: 24px;
+                color: var(--gray);
+                cursor: pointer;
+            }
+
+    .navBar .topR {
+        width: 30%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 10px 0;
+        color: var(--black);
+    }
+
+        .navBar .topR .iconMaun {
+            display: none;
+            pointer-events: none;
+        }
+
+        .navBar .topR .barManu li {
+            position: relative;
+            border-radius: 5px;
+            margin-left:15px;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            transition: 0.2s;
+            color: var(--black);
+        }
+
+            .navBar .topR .barManu li:hover {
+                background-color: var(--bg);
+            }
+
+        .navBar .topR .barManu ul {
+            display: flex;
+            margin: auto;
+        }
+
+        .wrap-panel {
+            position: fixed;
+            width: 100vw;
+            min-height: 100vh;
+            margin: auto;
+            line-height: 1.3;
+            overflow: hidden;
+            z-index: 99;
+            pointer-events: none;
+        }
+
+.panelsToggle {
+    transition: 0.5s;
+    transition-timing-function: ease-out;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+}
+    .panelsToggle.On {
+        pointer-events: auto;
+    }
+.panelsToggle.bgOn {
+    pointer-events: auto;
+    opacity: 100;
+}
+
+/* RWD */
+@media (max-width: 900px) {
+    /*  將橫向導航列，轉為直向，並收到畫面外 */
+    .navBar .topR .barManu {
+        position: absolute;
+        display: block;
+        top: -5px;
+        right: -100%;
+        padding: 20px 10px;
+        text-align: left;
+        width: 40%;
+        height: 100vh;
+        background: var(--white);
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.03);
+        opacity: 0;
+        transition: 0.5s;
+        transition-timing-function: ease-out;
+        z-index: 5;
+    }
+
+        .navBar .topR .barManu.active {
+            transition: 0.5s;
+            display: block;
+            right: 0;
+            opacity: 1;
+            width: 50%;
+        }
+
+    .navBar .topR .iconMaun {
+        display: block;
+        position: fixed;
+        right: 20px;
+        padding: 5px;
+        font-size: 32px;
+        border-radius: 5px;
+        transition: 0.5s;
+        z-index: 100;
+        pointer-events: visible;
+    }
+
+    .navBar .topR .barManu ul {
+        position: relative;
+        display: block;
+        top: 55px;
+        margin: auto;
+    }
+
+    .navBar .topL .search {
+        width: 90%;
+    }
+        .navBar .topL .search i {
+            left: 92%;
+            top: 18%;
+            font-size: 22px;
+        }
+}
+
+@media(max-width:480px) {
+
+    .navBar .topR .barManu.active {
+        width: 80%;
+    }
+}

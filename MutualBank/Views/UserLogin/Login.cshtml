@@ -1,0 +1,246 @@
+﻿<div class="container mt-5">
+    <div class="m-auto col-md-6 col-sm-10 col-10">
+        <div id="homeContent" class="cn mb-5">
+            <form id="form" action="/UserLogin/Login" method="post" onsubmit="return false" class="">
+                <div class="row pt-3">
+                    <div class="col-12">
+                        <h4 class="postTitle mb-3">登入帳戶</h4>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="LoginName" class="form-label">帳號</label>
+                        <input type="text" class="form-control"
+                               id="LoginName" name="LoginName" v-model="Account" placeholder="">
+                        <div class="invalid-feedback">
+                            <div id="Accerrormsg"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="LoginPwd" class="form-label">密碼</label>
+                        <input type="password" class="form-control"
+                               id="LoginPwd" name="LoginPwd" v-model="Password" placeholder="">
+                        <div class="invalid-feedback">
+                            <div id="Pwderrormsg"></div>
+                        </div>
+                        <a id="forgetPwd" class="fs-14 fw-300 d-block mt-1 text-end" asp-controller="UserLogin" asp-action="forgetPassword">忘記密碼</a>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button class="postBtn w-25 mt-4" type="submit" v-on:click="sub">登入</button>
+                    </div>
+
+                    <div class="col-12 mt-3 text-center">
+                        <p class="continue"><span>OR</span></p>
+                        <div class="social-login">
+                            <a href="/UserLogin/FacebookLogin">
+                                <div class="facebook">
+                                    <span class="fab fa-facebook-f" aria-hidden="true"></span>
+
+                                </div>
+                            </a>
+                            @*                        <a href="#twitter">
+                            <div class="twitter">
+                            <span class="fab fa-twitter" aria-hidden="true"></span>
+                            </div>
+                            </a>*@
+                            <a href="/UserLogin/GoogleLogin">
+                                <div class="google">
+                                    <span class="fab fa-google" aria-hidden="true"></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        var vm = new Vue({
+            el: "#homeContent",
+            data:
+            {
+                Account: "",
+                Password: "",
+            },
+            methods:
+            {
+                sub: function() {
+                    var self = this;
+                    var data =
+                    {
+                        LoginName: this.Account,
+                        LoginPwd: this.Password,
+                    };
+                    console.log(data);
+
+                    fetch(`/api/Confirm/ConfirmLogin`, {
+                        method: 'POST',
+                        headers:
+                        {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(res) {
+                            console.log("m = ", res);
+                            if (res.accMessage != null) { document.getElementById("LoginName").setAttribute("class", "form-control is-invalid"); $('#Accerrormsg').text(res.accMessage); }
+                            else { document.getElementById("LoginName").setAttribute("class", "form-control is-valid") }
+                            if (res.pwdMessage != null) { document.getElementById("LoginPwd").setAttribute("class", "form-control is-invalid"); $('#Pwderrormsg').text(res.pwdMessage); }
+                            else { document.getElementById("LoginPwd").setAttribute("class", "form-control is-valid") }
+                            if (res.message == null) {
+                                $("#form").attr("onsubmit", "retrun true");
+                                $("#form").submit();
+                                console.log("ok");
+                            }
+                        })
+                        .catch(function(res) {
+                            console.log("err = ", res);
+                        });
+                },
+            },
+            computed:
+            {
+            }
+        });
+    </script>
+}
+    @section Styles
+    {
+    <style>
+        .cn {
+            position: relative;
+            border-radius: 5px;
+            padding: 10px 40px 30px;
+            background: var(--white);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .postTitle {
+            font-weight: 700;
+        }
+
+        .postBtn {
+            border: 0px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            background: var(--help);
+            font-weight: 700;
+        }
+
+            .postBtn:hover {
+                background: var(--help1);
+            }
+
+        h6 {
+            font-weight: 700;
+        }
+
+        h4::before {
+            content: '';
+            padding-right: 10px;
+            border-left: 5px solid var(--help);
+        }
+        p.continue {
+    color: #999;
+}
+
+p.continue span {
+    position: relative;
+}
+
+p.continue span:before {
+    position: absolute;
+    content: '';
+    height: 1px;
+    background: #999;
+    width: 89%;
+    left: -100%;
+    top: 12px;
+    opacity: .5;
+}
+
+p.continue span:after {
+    position: absolute;
+    content: '';
+    height: 1px;
+    background: #999;
+    width: 89%;
+    right: -100%;
+    top: 12px;
+    opacity: .5;
+}
+.social-login {
+        grid-gap: 10px;
+    }
+    .social-login {
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap: 15px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+.facebook {
+    width: 46px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 15px;
+    color: #fff;
+    background: #3b5998;
+}
+span.fab{
+    line-height: 46px;
+}
+.facebook:hover {
+    background: #3b5998;
+    color: #fff;
+}
+.twitter {
+    width: 46px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 15px;
+    color: #fff;
+    background: #1da1f2;
+}
+
+.twitter:hover {
+    background: #1da1f2;
+    color: #fff;
+}
+
+.google {
+    width: 46px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 15px;
+    color: #fff;
+    background: #ea4335;
+}
+
+.google:hover {
+    background: #ea4335;
+    color: #fff;
+}
+.facebook:hover,.twitter:hover,.google:hover  {
+    opacity: .8;
+}
+a#forgetPwd:hover{
+    font-weight:500;
+}
+    </style>
+}
